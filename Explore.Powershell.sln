@@ -16,6 +16,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Sandbox", "Sandbox\Sandbox.pssproj", "{1605EC48-2F09-40B7-82B3-99B660D8BAB1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {6CAFC0C6-A428-4D30-A9F9-700E829FEA51}
+	EndProjectSection
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "PowerShellModuleProject1", "PowerShellModuleProject1\PowerShellModuleProject1.pssproj", "{87ED817B-0E61-4075-8FE9-D72550DAB545}"
 EndProject

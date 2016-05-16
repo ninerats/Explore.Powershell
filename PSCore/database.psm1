@@ -3,9 +3,9 @@
 # NOTE 2: There's a good chance The SQLPS module is better than SMO, for 2012.  Should use this instead if available.
 #
 
+Set-StrictMode -Version Latest
 
-
-Import-Module "$PSScriptRoot\thunk.psm1"
+Import-Module $libroot\Core.psm1
 
 function Invoke-SQL {
 	param(
@@ -48,12 +48,20 @@ param(
 		[string] $server,
 		[string] $database,
 		[string] $bakpath,
-		[switch] $replace
+		[switch] $replace,
+		[switch] $close #closed connections on the database if open
 	)
-	$template = "USE [master] RESTORE DATABASE [{0}] FROM  DISK = N'{0}' WITH  FILE = 1,  NOUNLOAD,  {2} STATS = 5"
-	$sql = $template -f $database,$bakpath, (IIf $replace "WITH REPLACE" "")
-	Write-Debug "bakpath=$bakpath, database=$database, replace=$replace"
-	Invoke-SQL $server $database $sql
+
+	try {
+		Invoke-SQL $server master ("ALTER DATABASE [{0}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE" -f $database)
+		$template = "RESTORE DATABASE [{0}] FROM  DISK = N'{1}' WITH  FILE = 1,  NOUNLOAD,  {2} STATS = 5"
+		$sql = $template -f $database,$bakpath, (IIf $replace "REPLACE," "")
+		Write-Debug "bakpath=$bakpath, database=$database, replace=$replace"
+		Invoke-SQL $server master $sql
+	}
+	finally{
+		Invoke-SQL $server master ("ALTER DATABASE [{0}] SET MULTI_USER" -f $database)
+	}
 }
 
 Add-Type -TypeDefinition @"
@@ -80,7 +88,7 @@ function Truncate-Log {
 		throw "Recovery mode {0} is Not supported" -f $recovery
 	}
 	
-	Write-Debug "server=$server, database=$database, RecoveryMode=$RecoveryMode"
+	Write-Debug "server=$server, database=$database, RecoveryMode=$recovery"
 	Invoke-SQL $server $database $sql
 
 }

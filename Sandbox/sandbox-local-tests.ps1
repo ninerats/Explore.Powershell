@@ -13,4 +13,6 @@ $here = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition ## for v.2 a
 Import-Module $libroot\Core.psm1
 Import-Module -Verbose "$here\sandbox-local.psm1"
 
-Update-SandboxDatabases "\\VBOXSVR\shared\baks"
+Set-PSDebug -Strict
+
+Update-SandboxDatabases "\\VBOXSVR\shared\baks" "(localdb)\v11.0" "FAKE_LoanSphere"

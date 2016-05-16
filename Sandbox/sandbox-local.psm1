@@ -19,16 +19,18 @@ Import-Module  -Verbose  "$PSScriptRoot\sandbox-common.psm1"
 
 function Update-SandboxDatabases {
 	param(
-		[string] $backupFolder
+		[string] $backupFolder,
+		[string] $server="localhost",
+		[string] $dbStem="LoanSphere"
 	)
 	
-	PushData localhost LoanSphere
+	PushData $server $dbStem
 
 	Unpack-Databases $backupFolder "(localdb)\v11.0" $dbStem C:\temp "EMPOWER_sql_pwd" "EMPOWER_userPwd"
 
 	Environmentalize
 
-	PopData localhost LoanSphere
+	PopData $server $dbStem
 
 }
 

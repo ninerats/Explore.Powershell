@@ -9,8 +9,8 @@ $PSScriptRoot = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition ## f
 
 ### Imports #######################################################################################################
 
-Import-Module -Verbose $libroot\Core.psm1
-Import-Module  -Verbose  "$libroot\database.psm1"
+Import-Module $libroot\Core.psm1
+Import-Module "$libroot\database.psm1"
 
 ### Functions #####################################################################################################
 
@@ -46,12 +46,12 @@ function UnpackDatabase{
 	)
 	
 	if (-Not $SkipBackup) {
-		Backup-Database $server $database (Join-Path $workFolder ($database + "_before_unpack.bak"))
+		Backup-Database $server $database (Join-Path $workingFolder ($database + "_before_unpack.bak"))
 	}
 	$bakFileName = "{0}.bak" -f $database
 	$dbBakFile = (Join-Path $workingFolder $bakFileName ) 
 	Copy-Item (Join-Path $sourceFolderUNC $bakFileName )  $dbBakFile
-	Restore-Database $server $database $dbBakFile -Replace
+	Restore-Database $server $database $dbBakFile -Replace -Close
 	Truncate-Log  $server $database	
 }
 
@@ -80,21 +80,21 @@ function Fixup-Common{
 
 function PushData {
 	param (
-		[string] $serverName,
+		[string] $server,
 		[string] $database
 	)
 	## sql to store system name in temp table
-	Invoke-SQL $server $dbStem "INSERT INTO [dbo].[Log] ([Message])  VALUES  ('pushing system name...')"
+	Invoke-SQL $server $database "INSERT INTO [dbo].[Log] ([Message])  VALUES  ('pushing system name...')"
 }
 
 function PopData {
 	param (
-		[string] $serverName,
+		[string] $server,
 		[string] $database
 
 		## sql to retrieve system name from temp table
 		## sql to drop temp table
 	)
-	Invoke-SQL $server $dbStem "INSERT INTO [dbo].[Log] ([Message])  VALUES  ('poping system name...')"
+	Invoke-SQL $server $database "INSERT INTO [dbo].[Log] ([Message])  VALUES  ('poping system name...')"
 }
 

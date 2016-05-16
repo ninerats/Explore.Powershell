@@ -4,6 +4,8 @@
 
 #Export-ModuleMember *-*
 
+Set-StrictMode -Version Latest
+
 $PSver = $PSVersionTable.PSVersion.Major
 if ($PSVer -lt 3) 
 {
