@@ -1,0 +1,1 @@
+"%~dp0runps1.bat" "%~dp0callrunsql.ps1"
